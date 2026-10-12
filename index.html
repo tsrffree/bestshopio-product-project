@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BestShopio 规划</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --card: #fffdf9;
+      --ink: #1c1914;
+      --muted: #6f685e;
+      --line: #e4ddd2;
+      --header: #1a1714;
+      --header-ink: #f7f3ec;
+      --header-muted: #c2b9ac;
+      --done: #2f6d4f;
+      --done-ink: #f4faf6;
+      --doing: #3e5680;
+      --doing-ink: #f5f7fb;
+      --planned: #e6e0d6;
+      --planned-ink: #4e493f;
+      --shadow: 0 1px 2px rgba(28, 25, 20, 0.04), 0 12px 32px rgba(28, 25, 20, 0.06);
+      --font: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 214px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 14px; line-height: 1.45; }
+    button, input, a { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .wrap { width: min(1440px, calc(100% - 32px)); margin: 0 auto; }
+    .top { position: sticky; top: 0; z-index: 20; background: var(--header); color: var(--header-ink); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .top-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 18px 0 10px; }
+    h1 { margin: 0; font-size: 26px; font-weight: 650; letter-spacing: -0.045em; color: var(--header-ink); }
+    .lead { margin: 6px 0 0; color: var(--header-muted); max-width: 820px; font-size: 13px; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 12px; }
+    .filters, .jumps { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip-btn, .jump, .ghost, .primary {
+      border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 999px; height: 34px; padding: 0 12px;
+      background: rgba(255, 255, 255, 0.06); color: var(--header-ink);
+    }
+    .chip-btn { display: inline-flex; align-items: center; gap: 6px; }
+    .chip-btn.active, .jump.active { background: var(--header-ink); color: var(--header); border-color: var(--header-ink); }
+    .chip-btn .n { margin-left: 4px; color: inherit; opacity: 0.62; font-variant-numeric: tabular-nums; }
+    .chip-btn.active .n { opacity: 0.55; }
+    .dot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 99px; vertical-align: 1px; }
+    .dot.done { background: var(--done); box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+    .dot.doing { background: var(--doing); }
+    .dot.planned { background: #c9c1b4; }
+    .status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }
+    .group-label { color: var(--header-muted); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+    .toolbar.sub { padding-top: 0; }
+    .gear {
+      display: inline-flex; align-items: center; justify-content: center; flex: none;
+      width: 18px; height: 18px; border-radius: 99px; background: #fff;
+      box-shadow: 0 0 0 1px rgba(23, 32, 51, .08);
+    }
+    .gear svg { display: block; }
+    .gear.supported { color: #1e5a3c; }
+    .gear.doing { color: #3e5680; }
+    .gear.planned { color: #8a8174; }
+    .mod { position: relative; }
+    .mod.has-gear { padding-right: 28px; }
+    .mod > .gear { position: absolute; top: 6px; right: 6px; }
+    .tile { position: relative; }
+    .tile-gears { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
+    .pick-label { margin: 2px 0 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .status-pick .supported { background: var(--done); color: var(--done-ink); }
+    .search { height: 34px; min-width: min(280px, 100%); border: 1px solid rgba(255,255,255,.08); border-radius: 999px; padding: 0 14px; background: rgba(255,255,255,.06); color: var(--header-ink); outline: none; }
+    .search::placeholder { color: var(--header-muted); }
+    .search:focus { border-color: rgba(255,255,255,.28); }
+    .spacer { flex: 1; }
+    .ghost { background: transparent; border-color: rgba(255,255,255,.16); color: var(--header-ink); }
+    .primary { background: var(--header); color: #fff; border-color: var(--header); }
+    .dirty { color: #6d5014; background: #f4e4c4; border-color: #e4cfa0; }
+    main { padding: 22px 0 80px; }
+    .surface { margin-top: 28px; scroll-margin-top: 196px; }
+    .surface-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .surface h2 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -0.03em; }
+    .surface .en { color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+    .links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .links a, .links span { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+    .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 16px; box-shadow: var(--shadow); min-width: 0; }
+    .card.span2 { grid-column: span 2; }
+    .card.span3 { grid-column: span 3; }
+    .card h3 { margin: 0 0 12px; font-size: 14px; font-weight: 650; letter-spacing: -0.02em; }
+    .card-cols { display: flex; flex-wrap: wrap; gap: 14px; }
+    .group { min-width: 180px; flex: 1; }
+    .group h4 { margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mod {
+      display: flex; flex-direction: column; justify-content: center; gap: 1px;
+      min-width: 108px; max-width: 100%; min-height: 52px; border: 0; border-radius: 8px;
+      padding: 7px 10px; text-align: left; line-height: 1.25;
+    }
+    .mod b { font-size: 13px; font-weight: 700; }
+    .mod span, .mod code { font-size: 11px; opacity: .78; }
+    .mod code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+    .mod { flex: 1 1 132px; max-width: 220px; }
+    .mod.done { background: var(--done); color: var(--done-ink); }
+    .mod.doing { background: var(--doing); color: var(--doing-ink); }
+    .mod.planned { background: var(--planned); color: var(--planned-ink); }
+    .mod.on { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .mod .tag { align-self: flex-start; margin-top: 3px; border-radius: 4px; padding: 0 5px; background: rgba(255,255,255,.45); font-size: 10px; font-weight: 700; }
+    .kids { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .kid {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      width: 100%; border: 0; border-radius: 8px; padding: 7px 8px; text-align: left; background: #f6f2ea;
+    }
+    .kid.on { outline: 2px solid var(--ink); }
+    .kid b { display: block; font-size: 12px; }
+    .kid code { color: var(--muted); font-size: 11px; }
+    .nest { flex: 1 1 100%; display: flex; flex-direction: column; gap: 8px; padding: 8px; border-radius: 12px; background: #f6f2ea; border: 1px solid #ebe4d8; }
+    .nest-kids { display: flex; flex-wrap: wrap; gap: 6px; }
+    .nest-label { flex: 1 0 100%; color: var(--muted); font-size: 11px; font-weight: 600; }
+    .nest > .mod { flex: 0 0 auto; align-self: stretch; width: 100%; max-width: none; min-height: 52px; }
+    .card { scroll-margin-top: 196px; }
+    .views { display: flex; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
+    .views button { height: 28px; border: 0; border-radius: 999px; padding: 0 12px; background: transparent; color: var(--header-muted); }
+    .views button.active { background: var(--header-ink); color: var(--header); }
+    .summary-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+    .tile {
+      display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+      min-height: 118px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--card);
+      box-shadow: var(--shadow); text-align: left; color: var(--ink);
+    }
+    .tile b { font-size: 16px; letter-spacing: -0.02em; }
+    .tile .zh { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; opacity: .72; }
+    .tile .meta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .tile > span:last-child { display: flex; flex-direction: column; gap: 8px; }
+    .bar { display: flex; height: 6px; overflow: hidden; border-radius: 99px; background: #e6e0d6; }
+    .bar i { display: block; height: 100%; flex: none; }
+    .bar .done { background: var(--done); }
+    .bar .doing { background: var(--doing); }
+    .bar .planned { background: #c9c1b4; }
+    .tile.done { background: var(--done); color: var(--done-ink); }
+    .tile.doing { background: var(--doing); color: var(--doing-ink); }
+    .tile.planned { background: var(--planned); color: var(--planned-ink); }
+    .tile.done .meta, .tile.doing .meta, .tile.planned .meta { color: inherit; opacity: .8; }
+    .tile.done .bar, .tile.doing .bar, .tile.planned .bar { display: none; }
+    .drawer-mask { position: fixed; inset: 0; z-index: 30; border: 0; background: rgba(26, 23, 20, .42); }
+    .drawer {
+      position: fixed; top: 0; right: 0; z-index: 31; display: flex; flex-direction: column;
+      width: min(420px, 100%); height: 100%; background: var(--card); box-shadow: -16px 0 40px rgba(26, 23, 20, .16);
+    }
+    .drawer header, .drawer footer { padding: 18px 18px 14px; }
+    .drawer header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .drawer h3 { margin: 0; font-size: 22px; }
+    .drawer .sub { margin-top: 4px; color: var(--muted); }
+    .x { width: 32px; height: 32px; border: 0; border-radius: 8px; background: var(--bg); color: var(--ink); }
+    .drawer .body { flex: 1; overflow: auto; padding: 0 18px 18px; }
+    .status-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+    .status-pick button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 64px; border: 2px solid transparent; border-radius: 10px; }
+    .status-pick button.on { border-color: var(--ink); }
+    .status-pick .done { background: var(--done); color: var(--done-ink); }
+    .status-pick .doing { background: var(--doing); color: var(--doing-ink); }
+    .status-pick .planned { background: var(--planned); color: var(--planned-ink); }
+    .path { display: block; margin: 8px 0 14px; padding: 10px 12px; border-radius: 8px; background: #f6f2ea; color: #3a342c; word-break: break-all; }
+    .note { margin: 0 0 14px; color: #3a342c; }
+    .empty { padding: 28px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); background: rgba(255,255,255,.55); }
+    .drawer footer { display: flex; gap: 8px; border-top: 1px solid var(--line); }
+    .drawer footer a, .drawer footer button { flex: 1; height: 40px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+    .drawer .ghost { background: var(--card); color: var(--ink); border-color: var(--line); }
+    .drawer .primary { background: var(--header); color: #fff; border-color: var(--header); }
+    .tile.done, .tile.doing, .tile.planned { border-color: transparent; }
+    .hidden { display: none !important; }
+    @media (max-width: 1100px) {
+      .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card.span2, .card.span3 { grid-column: span 2; }
+    }
+    @media (max-width: 720px) {
+      .wrap { width: min(100% - 20px, 1440px); }
+      .top-inner, .surface-head { flex-direction: column; align-items: stretch; }
+      .board { grid-template-columns: 1fr; }
+      .card.span2, .card.span3 { grid-column: auto; }
+      h1 { font-size: 24px; }
+      .drawer { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="top-inner">
+        <div>
+          <h1>BestShopio 规划</h1>
+          <p class="lead">汇总按模块看。商家后台的明细按 Shopify 侧栏：一级是菜单，变体这类能力收在对应页面里。前台按二级路径排，原型还没有的页面按 Shopify 占成灰色待规划。绿色已完成，蓝色进行中，灰色待规划。前台页右上角的齿轮是装修能力：绿已支持，蓝进行中，灰待规划。</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="views" id="views">
+          <button type="button" data-view="summary">汇总</button>
+          <button type="button" data-view="detail">明细</button>
+        </div>
+        <span class="group-label">页面进度</span>
+        <div class="filters" id="filters"></div>
+        <input class="search" id="q" type="search" placeholder="搜索模块或路径" aria-label="搜索模块或路径" />
+        <div class="spacer"></div>
+        <div class="jumps" id="jumps"></div>
+        <button class="ghost hidden" id="reset" type="button">恢复基线</button>
+        <button class="ghost" id="download" type="button">下载规划数据</button>
+      </div>
+      <div class="toolbar sub">
+        <span class="group-label">配置装修能力</span>
+        <div class="filters" id="decor-filters"></div>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" id="main"></main>
+  <div id="drawer-root"></div>
+  <script src="roadmap-data.js"></script>
+  <script>
+    var STATUSES = [
+      { id: "all", label: "全部" },
+      { id: "done", label: "已完成" },
+      { id: "doing", label: "进行中" },
+      { id: "planned", label: "待规划" }
+    ];
+    var STATUS_LABEL = { done: "已完成", doing: "进行中", planned: "待规划" };
+    var DECOR_STATUSES = [
+      { id: "all", label: "全部" },
+      { id: "supported", label: "已支持" },
+      { id: "doing", label: "进行中" },
+      { id: "planned", label: "待规划" }
+    ];
+    var DECOR_LABEL = { supported: "已支持", doing: "进行中", planned: "待规划" };
+    var GEAR_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.59.22-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.5.4 1.04.72 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.59-.22 1.13-.54 1.63-.94l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>';
+    var state = { view: "summary", filter: "all", decorFilter: "all", q: "", selected: "", overrides: {}, decorOverrides: {} };
+
+    function loadOverrides() {
+      try { state.overrides = JSON.parse(localStorage.getItem("bsio-roadmap-v1") || "{}"); }
+      catch (e) { state.overrides = {}; }
+      try { state.decorOverrides = JSON.parse(localStorage.getItem("bsio-roadmap-decor-v1") || "{}"); }
+      catch (e) { state.decorOverrides = {}; }
+    }
+    function saveOverrides() {
+      localStorage.setItem("bsio-roadmap-v1", JSON.stringify(state.overrides));
+      localStorage.setItem("bsio-roadmap-decor-v1", JSON.stringify(state.decorOverrides));
+    }
+    function esc(v) {
+      return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+    function statusOf(item) {
+      return state.overrides[item.id] || item.status;
+    }
+    function decorOf(item) {
+      if (!item.decor && !state.decorOverrides[item.id]) return "";
+      return state.decorOverrides[item.id] || item.decor || "";
+    }
+    function gearHtml(decor) {
+      if (!decor) return "";
+      var label = "装修" + DECOR_LABEL[decor];
+      return '<i class="gear ' + decor + '" title="' + esc(label) + '" aria-label="' + esc(label) + '">' + GEAR_SVG + "</i>";
+    }
+    function filtering() {
+      return !!(state.q || state.filter !== "all" || state.decorFilter !== "all");
+    }
+    function eachItem(fn) {
+      window.ROADMAP.surfaces.forEach(function (surface) {
+        surface.blocks.forEach(function (block) {
+          block.groups.forEach(function (group) {
+            group.items.forEach(function (item) {
+              fn(item, surface, block, group);
+              (item.children || []).forEach(function (child) { fn(child, surface, block, group, item); });
+            });
+          });
+        });
+      });
+    }
+    function findItem(id) {
+      var found = null;
+      eachItem(function (item, surface, block, group, parent) {
+        if (item.id === id) found = { item: item, surface: surface, block: block, group: group, parent: parent || null };
+      });
+      return found;
+    }
+    function counts() {
+      var c = { all: 0, done: 0, doing: 0, planned: 0 };
+      eachItem(function (item, surface, block, group, parent) {
+        if (parent && !parent.nest) return;
+        c.all += 1; c[statusOf(item)] += 1;
+      });
+      return c;
+    }
+    function decorCounts() {
+      var c = { all: 0, supported: 0, doing: 0, planned: 0 };
+      eachItem(function (item, surface, block, group, parent) {
+        if (parent && !parent.nest) return;
+        var decor = decorOf(item);
+        if (!decor) return;
+        c.all += 1;
+        c[decor] += 1;
+      });
+      return c;
+    }
+    function dirtyCount() {
+      var ids = Object.keys(state.overrides).concat(Object.keys(state.decorOverrides));
+      return ids.filter(function (id, index) { return ids.indexOf(id) === index && findItem(id); }).length;
+    }
+    function match(item) {
+      var text = [item.name, item.zh, item.path, item.note, item.tag].concat((item.children || []).map(function (child) {
+        return [child.name, child.zh, child.path].join(" ");
+      })).join(" ").toLowerCase();
+      if (state.q && text.indexOf(state.q) < 0) return false;
+      if (state.filter !== "all" && statusOf(item) !== state.filter) return false;
+      if (state.decorFilter !== "all" && decorOf(item) !== state.decorFilter) return false;
+      return true;
+    }
+    function isCloud() { return location.hostname.endsWith("github.io"); }
+    function hrefFor(surface, item) {
+      if (!item.path) return "";
+      if (/^https?:/.test(item.path)) return item.path;
+      if (item.path.charAt(0) === "#") return (isCloud() ? surface.cloud : surface.local) + item.path;
+      if (item.path.charAt(0) === "?") return (isCloud() ? surface.cloud : surface.local) + item.path;
+      return (isCloud() ? surface.cloudDir : surface.localDir) + item.path;
+    }
+    function blockLeaves(block) {
+      var items = [];
+      block.groups.forEach(function (group) {
+        group.items.forEach(function (item) { items.push(item); });
+      });
+      return items;
+    }
+    function blockNames(title) {
+      var matched = String(title).match(/^(.*?)（(.*)）$/);
+      return matched ? { name: matched[1], zh: matched[2] } : { name: title, zh: "" };
+    }
+    function blockTally(block) {
+      var tally = { all: 0, done: 0, doing: 0, planned: 0 };
+      blockLeaves(block).forEach(function (item) {
+        tally.all += 1;
+        tally[statusOf(item)] += 1;
+        if (!item.nest) return;
+        (item.children || []).forEach(function (child) {
+          tally.all += 1;
+          tally[statusOf(child)] += 1;
+        });
+      });
+      return tally;
+    }
+    function blockMatches(block) {
+      var leaves = [];
+      blockLeaves(block).forEach(function (item) {
+        leaves.push(item);
+        if (item.nest) (item.children || []).forEach(function (child) { leaves.push(child); });
+      });
+      var title = block.title.toLowerCase();
+      var textHit = !state.q || title.indexOf(state.q) >= 0 || leaves.some(function (item) {
+        return [item.name, item.zh, item.path, item.note, item.tag].join(" ").toLowerCase().indexOf(state.q) >= 0;
+      });
+      if (!textHit) return false;
+      return leaves.some(function (item) {
+        if (state.filter !== "all" && statusOf(item) !== state.filter) return false;
+        if (state.decorFilter !== "all" && decorOf(item) !== state.decorFilter) return false;
+        return true;
+      });
+    }
+    function blockDecors(block) {
+      var seen = [];
+      blockLeaves(block).forEach(function (item) {
+        var leaves = [item].concat(item.nest ? (item.children || []) : []);
+        leaves.forEach(function (leaf) {
+          var decor = decorOf(leaf);
+          if (decor && seen.indexOf(decor) < 0) seen.push(decor);
+        });
+      });
+      return ["supported", "doing", "planned"].filter(function (id) { return seen.indexOf(id) >= 0; });
+    }
+    function blockId(surface, block) { return "b-" + surface.id + "-" + block.id; }
+    function renderSummary() {
+      var html = window.ROADMAP.surfaces.map(function (surface) {
+        var tiles = surface.blocks.filter(blockMatches).map(function (block) {
+          var tally = blockTally(block);
+          var names = blockNames(block.title);
+          var tone = tally.done === tally.all ? "done" : tally.doing === tally.all ? "doing" : tally.planned === tally.all ? "planned" : "";
+          var bits = ["done", "doing", "planned"].map(function (id) {
+            return tally[id] ? '<i class="' + id + '" style="width:' + (tally[id] / tally.all * 100) + '%"></i>' : "";
+          }).join("");
+          var meta = tone ? tally.all + " 项 · " + STATUS_LABEL[tone] : [tally.done && tally.done + " 完成", tally.doing && tally.doing + " 进行", tally.planned && tally.planned + " 待规划"].filter(Boolean).join(" · ");
+          var gears = blockDecors(block).map(gearHtml).join("");
+          return '<button class="tile ' + tone + '" type="button" data-open="' + esc(blockId(surface, block)) + '">' + (gears ? '<span class="tile-gears">' + gears + "</span>" : "") + '<span><b>' + esc(names.name) + "</b>" + (names.zh ? '<span class="zh">' + esc(names.zh) + "</span>" : "") + '</span><span><span class="bar" aria-hidden="true">' + bits + '</span><span class="meta">' + esc(meta) + "</span></span></button>";
+        }).join("");
+        if (!tiles && filtering()) return "";
+        var local = isCloud() ? "" : '<a href="' + esc(surface.local) + '">打开本机原型</a>';
+        var body = tiles ? '<div class="summary-board">' + tiles + "</div>" : '<div class="empty">这一端没有符合筛选的模块。</div>';
+        return '<section class="surface" id="' + esc(surface.id) + '"><div class="surface-head"><div><h2>' + esc(surface.name) + '</h2><div class="en">' + esc(surface.en) + "</div></div><div class=\"links\"><a href=\"" + esc(surface.cloud) + '" target="_blank" rel="noopener">打开云端原型</a>' + local + "</div></div>" + body + "</section>";
+      }).join("");
+      document.getElementById("main").innerHTML = html || '<div class="empty">没有符合筛选的模块。</div>';
+    }
+    function nestBlock(item, surface) {
+      var kids = item.nest ? (item.children || []).filter(match) : [];
+      var showSelf = match(item);
+      if (!showSelf && !kids.length) return "";
+      if (!kids.length) return chip(item, surface);
+      var nestLabel = item.nestLabel || "能力项";
+      return '<div class="nest">' + (showSelf ? chip(item, surface) : "") + '<div class="nest-kids"><span class="nest-label">' + esc(nestLabel) + "</span>" + kids.map(function (child) { return chip(child, surface); }).join("") + "</div></div>";
+    }
+    function chip(item, surface) {
+      var st = statusOf(item);
+      var on = state.selected === item.id ? " on" : "";
+      var tag = item.tag ? '<i class="tag">' + esc(item.tag) + "</i>" : "";
+      var path = item.path && item.path.charAt(0) === "?" ? "<code>" + esc(item.path) + "</code>" : "";
+      var gear = gearHtml(decorOf(item));
+      return '<button class="mod ' + st + on + (gear ? " has-gear" : "") + '" type="button" data-id="' + esc(item.id) + '">' + gear + "<b>" + esc(item.name) + "</b><span>" + esc(item.zh || "") + "</span>" + path + tag + "</button>";
+    }
+    function renderBoard() {
+      document.getElementById("main").innerHTML = window.ROADMAP.surfaces.map(function (surface) {
+        var cards = [];
+        surface.blocks.forEach(function (block) {
+          var groups = [];
+          block.groups.forEach(function (group) {
+            var items = group.items.filter(function (item) {
+              if (match(item)) return true;
+              return (item.children || []).some(match);
+            });
+            if (!items.length) return;
+            var chips = items.map(function (item) { return nestBlock(item, surface); }).join("");
+            groups.push('<section class="group"><h4>' + esc(group.title) + '</h4><div class="chips">' + chips + "</div></section>");
+          });
+          if (!groups.length) return;
+          var span = block.span > 1 ? " span" + block.span : "";
+          cards.push('<article class="card' + span + '" id="' + esc(blockId(surface, block)) + '"><h3>' + esc(block.title) + '</h3><div class="card-cols">' + groups.join("") + "</div></article>");
+        });
+        if (!cards.length && filtering()) return "";
+        var local = isCloud() ? "" : '<a href="' + esc(surface.local) + '">打开本机原型</a>';
+        var body = cards.length ? '<div class="board">' + cards.join("") + "</div>" : '<div class="empty">这一端没有符合筛选的模块。</div>';
+        return '<section class="surface" id="' + esc(surface.id) + '"><div class="surface-head"><div><h2>' + esc(surface.name) + '</h2><div class="en">' + esc(surface.en) + "</div></div><div class=\"links\"><a href=\"" + esc(surface.cloud) + '" target="_blank" rel="noopener">打开云端原型</a>' + local + "</div></div>" + body + "</section>";
+      }).join("");
+      if (!document.getElementById("main").innerHTML) document.getElementById("main").innerHTML = '<div class="empty">没有符合筛选的模块。</div>';
+    }
+    function renderFilters() {
+      var c = counts();
+      document.getElementById("filters").innerHTML = STATUSES.map(function (s) {
+        var dot = s.id === "all" ? "" : '<i class="dot ' + s.id + '"></i>';
+        return '<button class="chip-btn' + (state.filter === s.id ? " active" : "") + '" type="button" data-filter="' + s.id + '">' + dot + s.label + '<span class="n">' + c[s.id] + "</span></button>";
+      }).join("");
+      var dc = decorCounts();
+      document.getElementById("decor-filters").innerHTML = DECOR_STATUSES.map(function (s) {
+        var mark = s.id === "all" ? "" : gearHtml(s.id);
+        return '<button class="chip-btn' + (state.decorFilter === s.id ? " active" : "") + '" type="button" data-decor-filter="' + s.id + '">' + mark + s.label + '<span class="n">' + dc[s.id] + "</span></button>";
+      }).join("");
+      document.getElementById("jumps").innerHTML = window.ROADMAP.surfaces.map(function (s) {
+        return '<a class="jump" href="#' + s.id + '">' + esc(s.name) + "</a>";
+      }).join("");
+      var n = dirtyCount();
+      var reset = document.getElementById("reset");
+      reset.classList.toggle("hidden", n === 0);
+      reset.textContent = "恢复基线（" + n + "）";
+      document.getElementById("download").classList.toggle("dirty", n > 0);
+      document.querySelectorAll("#views [data-view]").forEach(function (btn) {
+        btn.classList.toggle("active", btn.getAttribute("data-view") === state.view);
+      });
+    }
+    function renderDrawer() {
+      var root = document.getElementById("drawer-root");
+      var found = state.selected ? findItem(state.selected) : null;
+      if (!found) { root.innerHTML = ""; return; }
+      var item = found.item;
+      var st = statusOf(item);
+      var link = hrefFor(found.surface, item);
+      var picks = ["done", "doing", "planned"].map(function (id) {
+        return '<button class="' + id + (st === id ? " on" : "") + '" type="button" data-set="' + id + '">' + STATUS_LABEL[id] + "</button>";
+      }).join("");
+      var decor = decorOf(item);
+      var decorPick = decor ? '<p class="pick-label">配置装修能力</p><div class="status-pick">' + ["supported", "doing", "planned"].map(function (id) {
+        return '<button class="' + id + (decor === id ? " on" : "") + '" type="button" data-decor="' + id + '">' + gearHtml(id) + DECOR_LABEL[id] + "</button>";
+      }).join("") + "</div>" : "";
+      var open = link ? '<a class="primary" href="' + esc(link) + '"' + (/^https?:/.test(link) ? ' target="_blank" rel="noopener"' : "") + ">打开原型</a>" : '<button class="ghost" type="button" disabled>还没有原型页面</button>';
+      var kidLabel = item.nest ? (item.nestLabel || "能力项") : "包含页面";
+      var kids = (item.children || []).map(function (child) {
+        var childLink = hrefFor(found.surface, child);
+        return '<a class="path" href="' + esc(childLink) + '">' + esc(child.zh || child.name) + " · " + esc(child.path || "") + "</a>";
+      }).join("");
+      root.innerHTML = '<button class="drawer-mask" type="button" data-close aria-label="关闭"></button><aside class="drawer" role="dialog" aria-modal="true"><header><div><h3>' + esc(item.name) + '</h3><div class="sub">' + esc(found.surface.name) + " · " + esc(found.block.title) + " · " + esc(item.zh || "") + '</div></div><button class="x" type="button" data-close aria-label="关闭">×</button></header><div class="body"><p class="pick-label">页面进度</p><div class="status-pick">' + picks + "</div>" + decorPick + (item.path ? '<code class="path">' + esc(item.path) + "</code>" : "") + (item.note ? '<p class="note">' + esc(item.note) + "</p>" : "") + (kids ? '<p class="note">' + kidLabel + "</p>" + kids : "") + (item.tag ? '<p class="note">标记：' + esc(item.tag) + "</p>" : "") + '<p class="note">改状态后会留在这台浏览器。下载规划数据并替换 roadmap-data.js，其他人打开才是新状态。</p></div><footer>' + open + '<button class="ghost" type="button" data-close>关闭</button></footer></aside>';
+    }
+    function render() {
+      renderFilters();
+      if (state.view === "summary") renderSummary();
+      else renderBoard();
+      renderDrawer();
+    }
+    function setView(view, hash) {
+      state.view = view;
+      if (view === "summary") state.selected = "";
+      history.replaceState(null, "", "?view=" + view + (hash || ""));
+      render();
+      if (hash) {
+        var target = document.querySelector(hash);
+        if (target) target.scrollIntoView();
+      }
+    }
+    function setStatus(id, status) {
+      var found = findItem(id);
+      if (!found) return;
+      if (status === found.item.status) delete state.overrides[id];
+      else state.overrides[id] = status;
+      saveOverrides();
+      render();
+    }
+    function setDecor(id, decor) {
+      var found = findItem(id);
+      if (!found || !found.item.decor) return;
+      if (decor === found.item.decor) delete state.decorOverrides[id];
+      else state.decorOverrides[id] = decor;
+      saveOverrides();
+      render();
+    }
+    function downloadData() {
+      var data = JSON.parse(JSON.stringify(window.ROADMAP));
+      data.updated = new Date().toISOString().slice(0, 10);
+      data.surfaces.forEach(function (surface) {
+        surface.blocks.forEach(function (block) {
+          block.groups.forEach(function (group) {
+            group.items.forEach(function (item) {
+              if (state.overrides[item.id]) item.status = state.overrides[item.id];
+              if (state.decorOverrides[item.id]) item.decor = state.decorOverrides[item.id];
+              (item.children || []).forEach(function (child) {
+                if (state.overrides[child.id]) child.status = state.overrides[child.id];
+                if (state.decorOverrides[child.id]) child.decor = state.decorOverrides[child.id];
+              });
+            });
+          });
+        });
+      });
+      var blob = new Blob(["window.ROADMAP = " + JSON.stringify(data, null, 2) + ";\n"], { type: "text/javascript" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "roadmap-data.js";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    document.getElementById("views").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-view]");
+      if (!btn) return;
+      setView(btn.getAttribute("data-view"), "");
+    });
+    document.getElementById("filters").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-filter]");
+      if (!btn) return;
+      state.filter = btn.getAttribute("data-filter");
+      render();
+    });
+    document.getElementById("decor-filters").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-decor-filter]");
+      if (!btn) return;
+      state.decorFilter = btn.getAttribute("data-decor-filter");
+      render();
+    });
+    document.getElementById("q").addEventListener("input", function (e) {
+      state.q = e.target.value.trim().toLowerCase();
+      render();
+    });
+    document.getElementById("main").addEventListener("click", function (e) {
+      var open = e.target.closest("[data-open]");
+      if (open) { setView("detail", "#" + open.getAttribute("data-open")); return; }
+      var btn = e.target.closest("[data-id]");
+      if (!btn) return;
+      state.selected = btn.getAttribute("data-id");
+      render();
+    });
+    document.getElementById("drawer-root").addEventListener("click", function (e) {
+      if (e.target.closest("[data-close]")) { state.selected = ""; render(); return; }
+      var set = e.target.closest("[data-set]");
+      if (set) setStatus(state.selected, set.getAttribute("data-set"));
+      var decor = e.target.closest("[data-decor]");
+      if (decor) setDecor(state.selected, decor.getAttribute("data-decor"));
+    });
+    document.getElementById("reset").addEventListener("click", function () {
+      state.overrides = {};
+      state.decorOverrides = {};
+      saveOverrides();
+      render();
+    });
+    document.getElementById("download").addEventListener("click", downloadData);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && state.selected) { state.selected = ""; render(); }
+    });
+    loadOverrides();
+    if (/^#(merchant|saas|storefront|b-)/.test(location.hash) || new URLSearchParams(location.search).get("view") === "detail") state.view = "detail";
+    render();
+    if (state.view === "detail" && location.hash) {
+      var landed = document.querySelector(location.hash);
+      if (landed) landed.scrollIntoView();
+    }
+  </script>
+</body>
+</html>
