@@ -54,15 +54,15 @@
     .toolbar.sub { padding-top: 0; }
     .gear {
       display: inline-flex; align-items: center; justify-content: center; flex: none;
-      width: 18px; height: 18px; border-radius: 99px; background: #fff;
-      box-shadow: 0 0 0 1px rgba(23, 32, 51, .08);
+      width: 20px; height: 20px; border-radius: 99px; color: #fff;
+      box-shadow: 0 0 0 2px #fff, 0 1px 2px rgba(28, 25, 20, .2);
     }
     .gear svg { display: block; }
-    .gear.supported { color: #1e5a3c; }
-    .gear.doing { color: #3e5680; }
-    .gear.planned { color: #8a8174; }
+    .gear.supported { background: #1f9d55; }
+    .gear.doing { background: #2f6bff; }
+    .gear.planned { background: #6e675f; }
     .mod { position: relative; }
-    .mod.has-gear { padding-right: 28px; }
+    .mod.has-gear { padding-right: 30px; }
     .mod > .gear { position: absolute; top: 6px; right: 6px; }
     .tile { position: relative; }
     .tile-gears { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
@@ -248,7 +248,7 @@
       { id: "planned", label: "待规划" }
     ];
     var DECOR_LABEL = { supported: "已支持", doing: "进行中", planned: "待规划" };
-    var GEAR_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.59.22-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.5.4 1.04.72 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.59-.22 1.13-.54 1.63-.94l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>';
+    var GEAR_SVG = '<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.59.22-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.5.4 1.04.72 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.59-.22 1.13-.54 1.63-.94l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>';
     var REPO = "tsrffree/bestshopio-product-project";
     var FILE_HEADER = "/* BestShopio 规划地图。\n   改 status 即可更新全站颜色：done 已完成，doing 进行中，planned 待规划。\n   前台页另有 decor：supported 装修已支持，doing 进行中，planned 待规划。\n   页面上改状态后点保存，会写入 GitHub 仓库，云端和本机打开的都是这一版。 */\n";
     var state = { view: "summary", filter: "all", decorFilter: "all", q: "", selected: "", overrides: {}, decorOverrides: {}, saving: false, saveError: "", saveOk: false };
