@@ -257,7 +257,7 @@ window.ROADMAP = {
                       "id": "m-customer-tag",
                       "name": "Tag",
                       "zh": "客户标签",
-                      "status": "doing"
+                      "status": "planned"
                     }
                   ]
                 },
@@ -350,7 +350,7 @@ window.ROADMAP = {
                       "id": "m-bxgy",
                       "name": "Buy X get Y",
                       "zh": "买 X 送 Y",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/discounts"
                     }
                   ]
@@ -469,7 +469,7 @@ window.ROADMAP = {
                   "id": "m-overview",
                   "name": "Analytics",
                   "zh": "分析总览",
-                  "status": "doing",
+                  "status": "done",
                   "path": "#/analytics"
                 },
                 {
@@ -485,56 +485,56 @@ window.ROADMAP = {
                       "id": "m-yearbook",
                       "name": "数据年鉴",
                       "zh": "年报",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-sale-report",
                       "name": "Sale report",
                       "zh": "销售报表",
-                      "status": "doing",
+                      "status": "done",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-order-report",
                       "name": "Order report",
                       "zh": "订单报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-customer-report",
                       "name": "Customer report",
                       "zh": "客户报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-behavior-report",
                       "name": "Behavior report",
                       "zh": "行为报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-finance-report",
                       "name": "Finance report",
                       "zh": "财务报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-product-report",
                       "name": "Product report",
                       "zh": "商品报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
                       "id": "m-marketing-report",
                       "name": "Marketing report",
                       "zh": "营销报表",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/analytics"
                     },
                     {
@@ -561,7 +561,7 @@ window.ROADMAP = {
                   "id": "m-live",
                   "name": "Live view",
                   "zh": "实时数据",
-                  "status": "doing",
+                  "status": "planned",
                   "path": "#/analytics",
                   "note": "Analytics > Live View。"
                 }
@@ -590,7 +590,7 @@ window.ROADMAP = {
                       "id": "m-theme-home",
                       "name": "Home",
                       "zh": "首页模板",
-                      "status": "doing",
+                      "status": "done",
                       "path": "#/online-store"
                     },
                     {
@@ -613,14 +613,14 @@ window.ROADMAP = {
                       "id": "m-pdp",
                       "name": "PDP",
                       "zh": "商品详情模板",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
                       "id": "m-theme-cart",
                       "name": "Cart",
                       "zh": "购物车模板",
-                      "status": "done",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
@@ -641,41 +641,41 @@ window.ROADMAP = {
                       "id": "m-theme-blog",
                       "name": "Blog",
                       "zh": "博客模板",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
                       "id": "m-theme-page",
                       "name": "Page",
                       "zh": "页面模板",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
                       "id": "m-search",
                       "name": "Search",
                       "zh": "搜索模板",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
                       "id": "m-theme-account",
                       "name": "Customer account",
                       "zh": "个人中心模板",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/online-store"
                     },
                     {
                       "id": "m-theme-market",
                       "name": "模板市场",
                       "zh": "主题模板",
-                      "status": "doing"
+                      "status": "planned"
                     },
                     {
                       "id": "m-ai-site",
                       "name": "AI 建站",
                       "zh": "自动生成站点",
-                      "status": "doing",
+                      "status": "planned",
                       "note": "BestShopio 能力，包在主题里。"
                     }
                   ]
@@ -724,7 +724,7 @@ window.ROADMAP = {
                   "id": "m-facebook",
                   "name": "Facebook & Instagram",
                   "zh": "Meta 店铺",
-                  "status": "doing",
+                  "status": "planned",
                   "path": "#/facebook"
                 },
                 {
@@ -749,7 +749,7 @@ window.ROADMAP = {
                   "id": "m-tracking",
                   "name": "Tracking 工具",
                   "zh": "对接 IMS",
-                  "status": "done"
+                  "status": "planned"
                 },
                 {
                   "id": "m-subscription",
@@ -762,7 +762,7 @@ window.ROADMAP = {
                   "id": "m-bestcheckout",
                   "name": "BestCheckout",
                   "zh": "结账增长",
-                  "status": "doing",
+                  "status": "done",
                   "path": "https://zjc66666-pm.github.io/BestCheckout/app/#/home",
                   "tag": "BestCheckout"
                 },
@@ -770,25 +770,25 @@ window.ROADMAP = {
                   "id": "m-search-app",
                   "name": "Search",
                   "zh": "搜索",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-cs",
                   "name": "Customer service",
                   "zh": "客服",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-seo",
                   "name": "SEO",
                   "zh": "搜索引擎优化",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-reco",
                   "name": "Recommendation",
                   "zh": "推荐",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-ab",
@@ -800,7 +800,7 @@ window.ROADMAP = {
                   "id": "m-translate",
                   "name": "Translate & Adapt",
                   "zh": "翻译适配",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-messaging",
@@ -818,7 +818,7 @@ window.ROADMAP = {
                   "id": "m-applovin",
                   "name": "AppLovin",
                   "zh": "广告",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-newsbreak",
@@ -848,13 +848,13 @@ window.ROADMAP = {
                   "id": "m-oms",
                   "name": "对接 OMS",
                   "zh": "发货",
-                  "status": "done"
+                  "status": "planned"
                 },
                 {
                   "id": "m-bestfulfill",
                   "name": "Bestfulfill",
                   "zh": "履约",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-erp",
@@ -1065,7 +1065,7 @@ window.ROADMAP = {
                   "id": "m-ship-locations",
                   "name": "Locations",
                   "zh": "地点",
-                  "status": "done",
+                  "status": "planned",
                   "path": "#/settings/shippable-locations"
                 },
                 {
@@ -1109,7 +1109,7 @@ window.ROADMAP = {
                       "id": "m-settings-metaobjects",
                       "name": "Metaobject definitions",
                       "zh": "元对象定义",
-                      "status": "doing"
+                      "status": "planned"
                     }
                   ]
                 },
@@ -1117,7 +1117,7 @@ window.ROADMAP = {
                   "id": "m-languages",
                   "name": "Languages",
                   "zh": "语言",
-                  "status": "done",
+                  "status": "planned",
                   "path": "#/settings/base",
                   "note": "商店语言。各市场用哪一种语言在市场里。"
                 },
@@ -1125,13 +1125,13 @@ window.ROADMAP = {
                   "id": "m-policy",
                   "name": "Policies",
                   "zh": "政策",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-privacy",
                   "name": "Customer privacy",
                   "zh": "客户隐私",
-                  "status": "doing"
+                  "status": "planned"
                 },
                 {
                   "id": "m-apps-settings",
@@ -1171,7 +1171,7 @@ window.ROADMAP = {
                   "id": "m-one-click",
                   "name": "One-click launch store",
                   "zh": "一键开店",
-                  "status": "doing",
+                  "status": "done",
                   "path": "account/create-store.html",
                   "tag": "BestShopio"
                 }
@@ -1400,7 +1400,7 @@ window.ROADMAP = {
                   "id": "f-product",
                   "name": "PDP",
                   "zh": "商品详情",
-                  "status": "planned",
+                  "status": "done",
                   "note": "Shopify 路径 /products/{handle}。原型还没有这一页，先占位。",
                   "decor": "planned"
                 }
@@ -1448,7 +1448,7 @@ window.ROADMAP = {
                   "id": "f-search",
                   "name": "Search",
                   "zh": "搜索",
-                  "status": "planned",
+                  "status": "done",
                   "note": "Shopify 路径 /search。原型还没有这一页，先占位。",
                   "decor": "planned"
                 }
@@ -1611,7 +1611,7 @@ window.ROADMAP = {
                   "id": "f-order-status",
                   "name": "Order status",
                   "zh": "订单状态",
-                  "status": "planned",
+                  "status": "done",
                   "note": "二级路径 orders，地址 /orders/{order_token}，有时带 /authenticate?key=。和结账、账户里的订单详情都不是同一页。顾客再打开感谢页，或从确认邮件进来，会落到这里。原型还没有，先占位。",
                   "decor": "planned"
                 }
@@ -1630,7 +1630,7 @@ window.ROADMAP = {
                   "id": "f-pages",
                   "name": "Pages",
                   "zh": "自定义页面",
-                  "status": "planned",
+                  "status": "done",
                   "nest": true,
                   "nestLabel": "三级路径",
                   "note": "Shopify 路径 /pages/{handle}。About、Contact 都是这一路径下的不同页面。原型还没有，先占位。",
@@ -1639,14 +1639,14 @@ window.ROADMAP = {
                       "id": "f-about",
                       "name": "About",
                       "zh": "关于我们",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     },
                     {
                       "id": "f-contact",
                       "name": "Contact",
                       "zh": "联系我们",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     }
                   ],
@@ -1667,7 +1667,7 @@ window.ROADMAP = {
                   "id": "f-blog",
                   "name": "Blog",
                   "zh": "博客",
-                  "status": "planned",
+                  "status": "done",
                   "nest": true,
                   "nestLabel": "三级路径",
                   "note": "Shopify 路径 /blogs/{blog}。原型还没有，先占位。",
@@ -1676,7 +1676,7 @@ window.ROADMAP = {
                       "id": "f-article",
                       "name": "Article",
                       "zh": "文章",
-                      "status": "planned",
+                      "status": "done",
                       "note": "Shopify 路径 /blogs/{blog}/{article}。",
                       "decor": "planned"
                     }
@@ -1837,7 +1837,7 @@ window.ROADMAP = {
                   "id": "f-policies",
                   "name": "Policies",
                   "zh": "政策",
-                  "status": "planned",
+                  "status": "done",
                   "nest": true,
                   "nestLabel": "三级路径",
                   "note": "Shopify 路径 /policies/{policy}。页脚里的政策链接还指向系列页，原型没有单独页面，先占位。",
@@ -1846,28 +1846,28 @@ window.ROADMAP = {
                       "id": "f-policy-privacy",
                       "name": "Privacy",
                       "zh": "隐私政策",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     },
                     {
                       "id": "f-policy-refund",
                       "name": "Refund",
                       "zh": "退款政策",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     },
                     {
                       "id": "f-policy-terms",
                       "name": "Terms",
                       "zh": "服务条款",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     },
                     {
                       "id": "f-policy-shipping",
                       "name": "Shipping",
                       "zh": "配送政策",
-                      "status": "planned",
+                      "status": "done",
                       "decor": "planned"
                     }
                   ],
@@ -1907,7 +1907,7 @@ window.ROADMAP = {
                   "id": "f-store-password",
                   "name": "Password",
                   "zh": "店铺密码页",
-                  "status": "planned",
+                  "status": "done",
                   "note": "Shopify 路径 /password。店铺未公开时的落地页。原型还没有，先占位。",
                   "decor": "planned"
                 }
@@ -1926,7 +1926,7 @@ window.ROADMAP = {
                   "id": "f-404",
                   "name": "404",
                   "zh": "未找到",
-                  "status": "planned",
+                  "status": "done",
                   "note": "无效地址时的页面。原型还没有，先占位。",
                   "decor": "planned"
                 }
