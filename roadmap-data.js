@@ -1,9 +1,9 @@
 /* BestShopio 规划地图。
    改 status 即可更新全站颜色：done 已完成，doing 进行中，planned 待规划。
    前台页另有 decor：supported 装修已支持，doing 进行中，planned 待规划。
-   页面上的改动会先留在浏览器里；下载后用新文件替换本文件，团队看到的就是同一版。 */
+   页面上改状态后点保存，会写入 GitHub 仓库，云端和本机打开的都是这一版。 */
 window.ROADMAP = {
-  "updated": "2026-10-12",
+  "updated": "2026-10-13",
   "surfaces": [
     {
       "id": "merchant",
@@ -1520,25 +1520,25 @@ window.ROADMAP = {
                       "id": "f-processing",
                       "name": "Processing",
                       "zh": "支付处理中",
-                      "status": "planned",
+                      "status": "done",
                       "note": "路径 /checkouts/cn/{token}/processing。付款提交后、感谢页之前。原型还没有，先占位。",
-                      "decor": "planned"
+                      "decor": "supported"
                     },
                     {
                       "id": "f-thankyou",
                       "name": "Thank you",
                       "zh": "感谢页",
-                      "status": "planned",
+                      "status": "done",
                       "note": "路径 /checkouts/cn/{token}/thank_you，新店也可能写成 /thank-you。原型的 checkout 还没有这一步，先占位。",
-                      "decor": "planned"
+                      "decor": "supported"
                     },
                     {
                       "id": "f-recover",
                       "name": "Recover",
                       "zh": "弃单恢复",
-                      "status": "planned",
+                      "status": "doing",
                       "note": "路径 /{店铺数字 ID}/checkouts/ac/{cart_token}/recover?key={key}。打开后回到这次没付完的结账。原型还没有，先占位。",
-                      "decor": "planned"
+                      "decor": "doing"
                     }
                   ],
                   "decor": "supported"
@@ -1552,49 +1552,49 @@ window.ROADMAP = {
                   "id": "f-step-contact",
                   "name": "Contact",
                   "zh": "联系方式",
-                  "status": "planned",
+                  "status": "done",
                   "note": "不是新路径，停在结账地址上，用 ?step=contact_information。原型还没按步骤拆开，先占位。",
-                  "decor": "planned"
+                  "decor": "supported"
                 },
                 {
                   "id": "f-step-shipping",
                   "name": "Shipping",
                   "zh": "配送方式",
-                  "status": "planned",
+                  "status": "done",
                   "note": "同一条结账地址，?step=shipping_method。虚拟商品会跳过。",
-                  "decor": "planned"
+                  "decor": "supported"
                 },
                 {
                   "id": "f-step-payment",
                   "name": "Payment",
                   "zh": "支付",
-                  "status": "planned",
+                  "status": "done",
                   "note": "同一条结账地址，?step=payment_method。",
-                  "decor": "planned"
+                  "decor": "supported"
                 },
                 {
                   "id": "f-step-review",
                   "name": "Review",
                   "zh": "下单前确认",
-                  "status": "planned",
+                  "status": "done",
                   "note": "同一条结账地址，?step=review。后台打开才出现。",
-                  "decor": "planned"
+                  "decor": "supported"
                 },
                 {
                   "id": "f-step-stock",
                   "name": "Stock problems",
                   "zh": "库存不足",
-                  "status": "planned",
+                  "status": "done",
                   "note": "结账过程中的 stock_problems。库存不够时出现。",
-                  "decor": "planned"
+                  "decor": "supported"
                 },
                 {
                   "id": "f-step-forward",
                   "name": "Forward",
                   "zh": "站外支付",
-                  "status": "planned",
+                  "status": "done",
                   "note": "结账过程中的 forward。跳去 PayPal 等站外支付。",
-                  "decor": "planned"
+                  "decor": "supported"
                 }
               ]
             }
