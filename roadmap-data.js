@@ -74,7 +74,7 @@ window.ROADMAP = {
                       "id": "m-draft",
                       "name": "Draft",
                       "zh": "草稿单",
-                      "status": "doing",
+                      "status": "planned",
                       "path": "#/orders",
                       "note": "Orders > Drafts，不是侧栏二级菜单。"
                     },
@@ -170,26 +170,26 @@ window.ROADMAP = {
                       "id": "m-sourcing",
                       "name": "商品采集",
                       "zh": "竞品跟踪 · 详情",
-                      "status": "doing",
+                      "status": "planned",
                       "note": "BestShopio 能力，不是 Shopify 菜单。"
                     },
                     {
                       "id": "m-copy-ai",
                       "name": "商品内容",
                       "zh": "AI 生成 / 优化",
-                      "status": "doing"
+                      "status": "planned"
                     },
                     {
                       "id": "m-image-ai",
                       "name": "商品图片",
                       "zh": "AI 生成 / 优化",
-                      "status": "doing"
+                      "status": "planned"
                     },
                     {
                       "id": "m-export",
                       "name": "Export / Import",
                       "zh": "导入导出",
-                      "status": "doing",
+                      "status": "planned",
                       "note": "商品导入是主入口。订单和客户也有导出，没有单独的设置菜单。"
                     }
                   ]
