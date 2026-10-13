@@ -73,7 +73,11 @@
     .spacer { flex: 1; }
     .ghost { background: transparent; border-color: rgba(255,255,255,.16); color: var(--header-ink); }
     .primary { background: var(--header); color: #fff; border-color: var(--header); }
-    .dirty { color: #6d5014; background: #f4e4c4; border-color: #e4cfa0; }
+    .dirty, #save.pending { color: #6d5014; background: #f4e4c4; border-color: #e4cfa0; }
+    #save:disabled { opacity: .45; cursor: default; }
+    .save-msg { font-size: 12px; color: #d9c7a2; }
+    .save-msg.err { color: #f0b4a2; }
+    .mod.pending { box-shadow: inset 0 0 0 2px #c4a15a; }
     main { padding: 22px 0 80px; }
     .surface { margin-top: 28px; scroll-margin-top: 196px; }
     .surface-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
@@ -166,6 +170,16 @@
     .drawer .primary { background: var(--header); color: #fff; border-color: var(--header); }
     .tile.done, .tile.doing, .tile.planned { border-color: transparent; }
     .hidden { display: none !important; }
+    .token-mask { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(26, 23, 20, .42); }
+    .token-card { width: min(440px, 100%); padding: 20px; border-radius: 16px; background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+    .token-card h3 { margin: 0 0 8px; font-size: 18px; }
+    .token-card p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+    .token-card input { width: 100%; height: 40px; margin-bottom: 12px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+    .token-actions { display: flex; gap: 8px; }
+    .token-actions button, .token-actions a { flex: 1; height: 40px; border-radius: 10px; }
+    .token-actions a { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .token-card .ghost { background: var(--card); color: var(--ink); border-color: var(--line); }
+    .token-card .primary { background: var(--header); color: var(--header-ink); border-color: var(--header); }
     @media (max-width: 1100px) {
       .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .card.span2, .card.span3 { grid-column: span 2; }
@@ -199,8 +213,10 @@
         <input class="search" id="q" type="search" placeholder="搜索模块或路径" aria-label="搜索模块或路径" />
         <div class="spacer"></div>
         <div class="jumps" id="jumps"></div>
-        <button class="ghost hidden" id="reset" type="button">恢复基线</button>
+        <button class="ghost hidden" id="reset" type="button">放弃修改</button>
         <button class="ghost" id="download" type="button">下载规划数据</button>
+        <button class="ghost" id="save" type="button" disabled>保存</button>
+        <span class="save-msg" id="save-msg"></span>
       </div>
       <div class="toolbar sub">
         <span class="group-label">配置装修能力</span>
@@ -210,6 +226,7 @@
   </header>
   <main class="wrap" id="main"></main>
   <div id="drawer-root"></div>
+  <div id="token-dialog" class="hidden"></div>
   <script src="roadmap-data.js"></script>
   <script>
     var STATUSES = [
@@ -227,7 +244,9 @@
     ];
     var DECOR_LABEL = { supported: "已支持", doing: "进行中", planned: "待规划" };
     var GEAR_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.59.22-1.13.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.23.4.32.64.22l2.39-.96c.5.4 1.04.72 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.59-.22 1.13-.54 1.63-.94l2.39.96c.24.1.51.01.64-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>';
-    var state = { view: "summary", filter: "all", decorFilter: "all", q: "", selected: "", overrides: {}, decorOverrides: {} };
+    var REPO = "tsrffree/bestshopio-product-project";
+    var FILE_HEADER = "/* BestShopio 规划地图。\n   改 status 即可更新全站颜色：done 已完成，doing 进行中，planned 待规划。\n   前台页另有 decor：supported 装修已支持，doing 进行中，planned 待规划。\n   页面上改状态后点保存，会写入 GitHub 仓库，云端和本机打开的都是这一版。 */\n";
+    var state = { view: "summary", filter: "all", decorFilter: "all", q: "", selected: "", overrides: {}, decorOverrides: {}, saving: false, saveError: "", saveOk: false };
 
     function loadOverrides() {
       try { state.overrides = JSON.parse(localStorage.getItem("bsio-roadmap-v1") || "{}"); }
@@ -405,7 +424,8 @@
       var tag = item.tag ? '<i class="tag">' + esc(item.tag) + "</i>" : "";
       var path = item.path && item.path.charAt(0) === "?" ? "<code>" + esc(item.path) + "</code>" : "";
       var gear = gearHtml(decorOf(item));
-      return '<button class="mod ' + st + on + (gear ? " has-gear" : "") + '" type="button" data-id="' + esc(item.id) + '">' + gear + "<b>" + esc(item.name) + "</b><span>" + esc(item.zh || "") + "</span>" + path + tag + "</button>";
+      var pending = state.overrides[item.id] || state.decorOverrides[item.id] ? " pending" : "";
+      return '<button class="mod ' + st + on + pending + (gear ? " has-gear" : "") + '" type="button" data-id="' + esc(item.id) + '">' + gear + "<b>" + esc(item.name) + "</b><span>" + esc(item.zh || "") + "</span>" + path + tag + "</button>";
     }
     function renderBoard() {
       document.getElementById("main").innerHTML = window.ROADMAP.surfaces.map(function (surface) {
@@ -448,9 +468,15 @@
       }).join("");
       var n = dirtyCount();
       var reset = document.getElementById("reset");
+      var save = document.getElementById("save");
+      var msg = document.getElementById("save-msg");
       reset.classList.toggle("hidden", n === 0);
-      reset.textContent = "恢复基线（" + n + "）";
-      document.getElementById("download").classList.toggle("dirty", n > 0);
+      reset.textContent = "放弃修改（" + n + "）";
+      save.disabled = n === 0 || state.saving;
+      save.classList.toggle("pending", n > 0 && !state.saving);
+      save.textContent = state.saving ? "保存中" : n ? "保存（" + n + "）" : "保存";
+      msg.classList.toggle("err", !!state.saveError);
+      msg.textContent = state.saveError || (n ? "待保存" : state.saveOk ? "已写入 GitHub" : "");
       document.querySelectorAll("#views [data-view]").forEach(function (btn) {
         btn.classList.toggle("active", btn.getAttribute("data-view") === state.view);
       });
@@ -475,7 +501,7 @@
         var childLink = hrefFor(found.surface, child);
         return '<a class="path" href="' + esc(childLink) + '">' + esc(child.zh || child.name) + " · " + esc(child.path || "") + "</a>";
       }).join("");
-      root.innerHTML = '<button class="drawer-mask" type="button" data-close aria-label="关闭"></button><aside class="drawer" role="dialog" aria-modal="true"><header><div><h3>' + esc(item.name) + '</h3><div class="sub">' + esc(found.surface.name) + " · " + esc(found.block.title) + " · " + esc(item.zh || "") + '</div></div><button class="x" type="button" data-close aria-label="关闭">×</button></header><div class="body"><p class="pick-label">页面进度</p><div class="status-pick">' + picks + "</div>" + decorPick + (item.path ? '<code class="path">' + esc(item.path) + "</code>" : "") + (item.note ? '<p class="note">' + esc(item.note) + "</p>" : "") + (kids ? '<p class="note">' + kidLabel + "</p>" + kids : "") + (item.tag ? '<p class="note">标记：' + esc(item.tag) + "</p>" : "") + '<p class="note">改状态后会留在这台浏览器。下载规划数据并替换 roadmap-data.js，其他人打开才是新状态。</p></div><footer>' + open + '<button class="ghost" type="button" data-close>关闭</button></footer></aside>';
+      root.innerHTML = '<button class="drawer-mask" type="button" data-close aria-label="关闭"></button><aside class="drawer" role="dialog" aria-modal="true"><header><div><h3>' + esc(item.name) + '</h3><div class="sub">' + esc(found.surface.name) + " · " + esc(found.block.title) + " · " + esc(item.zh || "") + '</div></div><button class="x" type="button" data-close aria-label="关闭">×</button></header><div class="body"><p class="pick-label">页面进度</p><div class="status-pick">' + picks + "</div>" + decorPick + (item.path ? '<code class="path">' + esc(item.path) + "</code>" : "") + (item.note ? '<p class="note">' + esc(item.note) + "</p>" : "") + (kids ? '<p class="note">' + kidLabel + "</p>" + kids : "") + (item.tag ? '<p class="note">标记：' + esc(item.tag) + "</p>" : "") + '<p class="note">改状态后先显示在这台浏览器，顶栏会出现待保存。点保存才会写入 GitHub。</p></div><footer>' + open + '<button class="ghost" type="button" data-close>关闭</button></footer></aside>';
     }
     function render() {
       renderFilters();
@@ -498,6 +524,8 @@
       if (!found) return;
       if (status === found.item.status) delete state.overrides[id];
       else state.overrides[id] = status;
+      state.saveOk = false;
+      state.saveError = "";
       saveOverrides();
       render();
     }
@@ -506,10 +534,12 @@
       if (!found || !found.item.decor) return;
       if (decor === found.item.decor) delete state.decorOverrides[id];
       else state.decorOverrides[id] = decor;
+      state.saveOk = false;
+      state.saveError = "";
       saveOverrides();
       render();
     }
-    function downloadData() {
+    function appliedData() {
       var data = JSON.parse(JSON.stringify(window.ROADMAP));
       data.updated = new Date().toISOString().slice(0, 10);
       data.surfaces.forEach(function (surface) {
@@ -526,7 +556,98 @@
           });
         });
       });
-      var blob = new Blob(["window.ROADMAP = " + JSON.stringify(data, null, 2) + ";\n"], { type: "text/javascript" });
+      return data;
+    }
+    function fileText(data) {
+      return FILE_HEADER + "window.ROADMAP = " + JSON.stringify(data, null, 2) + ";\n";
+    }
+    function utf8ToB64(str) {
+      var bytes = new TextEncoder().encode(str);
+      var bin = "";
+      for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      return btoa(bin);
+    }
+    function openTokenDialog() {
+      var box = document.getElementById("token-dialog");
+      box.className = "token-mask";
+      box.innerHTML = '<form class="token-card"><h3>连接 GitHub</h3><p>保存会把规划状态写入 ' + REPO + '。令牌只留在这台浏览器。经典令牌勾选 public_repo；精细令牌选这个仓库，并打开 Contents 读写。</p><input id="token-input" type="password" autocomplete="off" placeholder="github_pat_ 或 ghp_"><div class="token-actions"><a class="ghost" href="https://github.com/settings/tokens/new?scopes=public_repo&description=BestShopio%20roadmap" target="_blank" rel="noopener">创建令牌</a><button class="ghost" type="button" id="token-cancel">取消</button><button class="primary" type="submit">保存并推送</button></div></form>';
+      box.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var token = document.getElementById("token-input").value.trim();
+        if (!token) return;
+        localStorage.setItem("bsio-github-token", token);
+        box.className = "hidden";
+        box.innerHTML = "";
+        saveToGitHub();
+      });
+      document.getElementById("token-cancel").addEventListener("click", function () {
+        box.className = "hidden";
+        box.innerHTML = "";
+      });
+      document.getElementById("token-input").focus();
+    }
+    function saveToGitHub() {
+      if (!dirtyCount() || state.saving) return;
+      var token = localStorage.getItem("bsio-github-token") || "";
+      if (!token) { openTokenDialog(); return; }
+      state.saving = true;
+      state.saveError = "";
+      state.saveOk = false;
+      render();
+      var url = "https://api.github.com/repos/" + REPO + "/contents/roadmap-data.js";
+      var headers = { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" };
+      fetch(url, { headers: headers }).then(function (res) {
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("bsio-github-token");
+          throw new Error("令牌无效或没有写入权限");
+        }
+        if (!res.ok) throw new Error("读取仓库失败");
+        return res.json();
+      }).then(function (meta) {
+        var data = appliedData();
+        return fetch(url, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify({ message: "Update planning status", content: utf8ToB64(fileText(data)), sha: meta.sha, branch: "main" })
+        }).then(function (res) {
+          if (!res.ok) return res.json().then(function (body) { throw new Error((body && body.message) || "保存失败"); });
+          window.ROADMAP = data;
+          state.overrides = {};
+          state.decorOverrides = {};
+          saveOverrides();
+          state.saveOk = true;
+        });
+      }).catch(function (err) {
+        state.saveError = err.message || "保存失败";
+        if (state.saveError.indexOf("令牌") >= 0) openTokenDialog();
+      }).then(function () {
+        state.saving = false;
+        render();
+      });
+    }
+    function syncBaseline() {
+      fetch("https://raw.githubusercontent.com/tsrffree/bestshopio-product-project/main/roadmap-data.js?t=" + Date.now(), { cache: "no-store" }).then(function (res) {
+        if (!res.ok) throw new Error();
+        return res.text();
+      }).then(function (text) {
+        if (state.saving) return;
+        var start = text.indexOf("{");
+        var remote = JSON.parse(text.slice(start, text.lastIndexOf("}") + 1));
+        window.ROADMAP = remote;
+        Object.keys(state.overrides).forEach(function (id) {
+          var found = findItem(id);
+          if (!found || state.overrides[id] === found.item.status) delete state.overrides[id];
+        });
+        Object.keys(state.decorOverrides).forEach(function (id) {
+          var found = findItem(id);
+          if (!found || state.decorOverrides[id] === found.item.decor) delete state.decorOverrides[id];
+        });
+        saveOverrides();
+        render();
+      }).catch(function () {});
+    }
+    function downloadData() {
+      var blob = new Blob([fileText(appliedData())], { type: "text/javascript" });
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "roadmap-data.js";
@@ -572,16 +693,28 @@
     document.getElementById("reset").addEventListener("click", function () {
       state.overrides = {};
       state.decorOverrides = {};
+      state.saveError = "";
+      state.saveOk = false;
       saveOverrides();
       render();
     });
     document.getElementById("download").addEventListener("click", downloadData);
+    document.getElementById("save").addEventListener("click", saveToGitHub);
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && state.selected) { state.selected = ""; render(); }
+      if (e.key !== "Escape") return;
+      var box = document.getElementById("token-dialog");
+      if (box && !box.classList.contains("hidden")) { box.className = "hidden"; box.innerHTML = ""; return; }
+      if (state.selected) { state.selected = ""; render(); }
+    });
+    window.addEventListener("beforeunload", function (e) {
+      if (!dirtyCount()) return;
+      e.preventDefault();
+      e.returnValue = "";
     });
     loadOverrides();
     if (/^#(merchant|saas|storefront|b-)/.test(location.hash) || new URLSearchParams(location.search).get("view") === "detail") state.view = "detail";
     render();
+    syncBaseline();
     if (state.view === "detail" && location.hash) {
       var landed = document.querySelector(location.hash);
       if (landed) landed.scrollIntoView();
