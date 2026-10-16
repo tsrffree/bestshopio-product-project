@@ -9,9 +9,9 @@ window.ROADMAP = {
       "id": "merchant",
       "name": "商家后台",
       "en": "BestShopio Merchant",
-      "local": "bestshopio-merchant/index.html",
+      "local": "../bestshopio-merchant/bestshopio-merchant/index.html",
       "cloud": "https://tsrffree.github.io/bestshopio-merchant/bestshopio-merchant/index.html",
-      "localDir": "bestshopio-merchant/",
+      "localDir": "../bestshopio-merchant/bestshopio-merchant/",
       "cloudDir": "https://tsrffree.github.io/bestshopio-merchant/bestshopio-merchant/",
       "blocks": [
         {
@@ -1185,9 +1185,9 @@ window.ROADMAP = {
       "id": "saas",
       "name": "SaaS 中台",
       "en": "BestShopio Platform",
-      "local": "bestshopio%20saas/prototype/index.html",
+      "local": "../bestshopio-saas/index.html",
       "cloud": "https://tsrffree.github.io/bestshopio-saas/",
-      "localDir": "bestshopio%20saas/prototype/",
+      "localDir": "../bestshopio-saas/",
       "cloudDir": "https://tsrffree.github.io/bestshopio-saas/",
       "blocks": [
         {
@@ -1364,9 +1364,9 @@ window.ROADMAP = {
       "id": "storefront",
       "name": "前台",
       "en": "BestShopio Storefront",
-      "local": "bestshopio%20storefront/index.html",
+      "local": "../bestshopio-storefront/index.html",
       "cloud": "https://tsrffree.github.io/bestshopio-storefront/",
-      "localDir": "bestshopio%20storefront/",
+      "localDir": "../bestshopio-storefront/",
       "cloudDir": "https://tsrffree.github.io/bestshopio-storefront/",
       "blocks": [
         {
