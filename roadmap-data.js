@@ -9,10 +9,10 @@ window.ROADMAP = {
       "id": "merchant",
       "name": "商家后台",
       "en": "BestShopio Merchant",
-      "local": "../bestshopio-merchant/bestshopio-merchant/index.html",
-      "cloud": "https://tsrffree.github.io/bestshopio-merchant/bestshopio-merchant/index.html",
-      "localDir": "../bestshopio-merchant/bestshopio-merchant/",
-      "cloudDir": "https://tsrffree.github.io/bestshopio-merchant/bestshopio-merchant/",
+      "local": "../bestshopio-merchant/index.html",
+      "cloud": "https://tsrffree.github.io/bestshopio-merchant/index.html",
+      "localDir": "../bestshopio-merchant/",
+      "cloudDir": "https://tsrffree.github.io/bestshopio-merchant/",
       "blocks": [
         {
           "id": "home",
